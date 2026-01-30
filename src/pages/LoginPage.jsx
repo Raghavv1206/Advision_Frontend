@@ -43,6 +43,33 @@ export default function LoginPage() {
     }
   };
 
+  // 🚀 Demo Login Logic
+  const handleDemoLogin = async () => {
+    setIsLoading(true);
+    const toastId = toast.loading("Logging in to Demo Account...");
+
+    // Update inputs for visual feedback
+    setEmail("demo@advision.com");
+    setPassword("demo123");
+
+    try {
+      const response = await apiClient.post("/auth/login/", {
+        email: "demo@advision.com",
+        password: "demo123",
+      });
+      localStorage.setItem("access_token", response.data.access);
+      localStorage.setItem("refresh_token", response.data.refresh);
+
+      toast.success("Logged in successfully!", { id: toastId });
+      navigate("/app/dashboard");
+    } catch (error) {
+      console.error("Login error:", error.response?.data);
+      toast.error("Demo login failed.", { id: toastId });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div
       className="relative flex flex-col items-center justify-center h-screen w-screen text-white"
@@ -82,24 +109,35 @@ export default function LoginPage() {
       {/* 🌟 Glassmorphic Login Card */}
       <div className="relative z-10 flex items-center justify-center h-screen">
         <div
-          className="p-6 w-[340px] rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 
+          className="p-5 w-[340px] rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 
                      shadow-[0_0_30px_rgba(189,168,200,0.3)] mt-10"
         >
           <h2 className="text-2xl font-semibold text-center mb-2 tracking-wide">
             Welcome Back
           </h2>
-          <p className="text-center text-gray-300 mb-6 text-sm">
+          <p className="text-center text-gray-300 mb-4 text-xs">
             Log in to your{" "}
             <span className="text-[#BDA8C8] font-medium">AdVision</span> account
           </p>
 
           {/* Google Login */}
-          <div className="mb-5">
+          <div className="mb-3">
             <GoogleLoginButton />
+
+            <button
+              type="button"
+              onClick={handleDemoLogin}
+              disabled={isLoading}
+              className="w-full mt-2 py-2 bg-transparent border border-[#a88fd8]/50 text-gray-200 text-xs font-medium 
+                         rounded-lg hover:border-[#a88fd8] hover:bg-[#a88fd8]/10 hover:text-white transition-all duration-300 
+                         disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <span>🚀</span> Try Demo Account
+            </button>
           </div>
 
           {/* Divider */}
-          <div className="flex items-center mb-5">
+          <div className="flex items-center mb-3">
             <div className="flex-grow border-t border-gray-600"></div>
             <span className="mx-3 text-gray-400 text-xs">OR</span>
             <div className="flex-grow border-t border-gray-600"></div>
@@ -107,8 +145,8 @@ export default function LoginPage() {
 
           {/* Email / Password Form */}
           <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-300 text-sm font-medium mb-2">
+            <div className="mb-3">
+              <label className="block text-gray-300 text-xs font-medium mb-1">
                 Email
               </label>
               <input
@@ -118,12 +156,12 @@ export default function LoginPage() {
                 placeholder="your.email@example.com"
                 required
                 disabled={isLoading}
-                className="w-full px-3 py-2 bg-black/40 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a88fd8] text-white placeholder-gray-400 text-sm"
+                className="w-full px-3 py-2 bg-black/40 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a88fd8] text-white placeholder-gray-400 text-xs"
               />
             </div>
 
-            <div className="mb-6">
-              <label className="block text-gray-300 text-sm font-medium mb-2">
+            <div className="mb-4">
+              <label className="block text-gray-300 text-xs font-medium mb-1">
                 Password
               </label>
               <input
@@ -133,7 +171,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
                 required
                 disabled={isLoading}
-                className="w-full px-3 py-2 bg-black/40 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a88fd8] text-white placeholder-gray-400 text-sm"
+                className="w-full px-3 py-2 bg-black/40 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a88fd8] text-white placeholder-gray-400 text-xs"
               />
             </div>
 
@@ -159,6 +197,6 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-    </div>
+    </div >
   );
 }
